@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -182,48 +183,53 @@ class ContasReceberResource extends Resource
         return $table
         ->defaultSort('data_vencimento', 'asc')
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                    ->summarize(Count::make())
+                    ->Label('Recebido?')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'success',
+                    })
+                    ->formatStateUsing(function ($state) {
+                        if ($state == 0) {
+                            return 'Não';
+                        }
+                        if ($state == 1) {
+                            return 'Sim';
+                        }
+                    }),
                 Tables\Columns\TextColumn::make('cliente.nome')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ordem_parcela')
                     ->alignCenter()
                     ->label('Parcela Nº'),
-                Tables\Columns\TextColumn::make('valor_total')
-                    ->badge()
-                    ->color('warning')
-                    ->label('Valor Total')
-                    ->money('BRL'),
-                Tables\Columns\TextColumn::make('data_vencimento')
-                    ->alignCenter()
-                    ->label('Data do Vencimento')
-                    ->badge()
-                    ->color('danger')
-                    ->sortable()
-                    ->date(),
-
                 Tables\Columns\TextColumn::make('valor_parcela')
                     ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
-                    ->alignCenter()
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
                     ->money('BRL'),
-                Tables\Columns\IconColumn::make('status')
+                Tables\Columns\TextColumn::make('data_vencimento')
                     ->alignCenter()
-                    ->label('Recebido')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('data_pagamento')
+                    ->label('Data Vencimento')
+                    ->date('d/m/Y')
                     ->alignCenter()
-                    ->label('Data do Recebimento')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('data_recebimento')
+                    ->label('Data Recebimento')
+                    ->date()
+                    ->alignCenter()
+                    ->date('d/m/Y')
+                    ->alignCenter()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('valor_recebido')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Pago'))
                     ->badge()
                     ->color('success')
-                    ->date(),
-                Tables\Columns\TextColumn::make('valor_recebido')
-                    ->summarize(Sum::make()->money('BRL')->label('Total Recebido'))
-                    ->alignCenter()
-                    ->label('Valor Recebido')
-                    ->badge()
-                    ->color('success'),
+                    ->label('Valor Recebido'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

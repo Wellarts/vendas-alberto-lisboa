@@ -18,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -49,8 +50,8 @@ class ContasPagarResource extends Resource
                             ])
                             ->label('Fornecedor')
                             ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
-                            ->required()
                             ->searchable()
+                            ->required()
                             ->disabled(function ($context) {
                                 if ($context == 'create') {
                                     return false;
@@ -83,12 +84,12 @@ class ContasPagarResource extends Resource
                                     return true;
                                 }
                             })
-                            
+
                             ->required(),
                         Forms\Components\TextInput::make('parcelas')
                             ->label('Qtd Parcelas')
                             ->required()
-                            ->live(onBlur:true)
+                            ->live(onBlur: true)
                             ->readOnly(function ($context) {
                                 if ($context == 'create') {
                                     return false;
@@ -96,7 +97,7 @@ class ContasPagarResource extends Resource
                                     return true;
                                 }
                             })
-                            ->afterStateUpdated(function($state, Set $set, Get $get){
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $set('valor_total', ($get('valor_parcela') * $state));
                             })
                             ->maxLength(255),
@@ -177,40 +178,48 @@ class ContasPagarResource extends Resource
         return $table
             ->defaultSort('data_vencimento', 'asc')
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                    ->summarize(Count::make())
+                    ->Label('Pago?')
+                    ->badge()
+                    ->alignCenter()
+                    ->color(fn(string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'success',
+                    })
+                    ->formatStateUsing(function ($state) {
+                        if ($state == 0) {
+                            return 'Não';
+                        }
+                        if ($state == 1) {
+                            return 'Sim';
+                        }
+                    }),
                 Tables\Columns\TextColumn::make('fornecedor.nome')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ordem_parcela')
                     ->alignCenter()
                     ->label('Parcela Nº'),
-                Tables\Columns\TextColumn::make('valor_total')
-                    ->label('Data do Vencimento')
-                    ->badge()
-                    ->color('warning')
-                    ->label('Valor Total')
-                    ->money('BRL'),
-                Tables\Columns\TextColumn::make('data_vencimento')
-                    ->label('Data do Vencimento')
-                    ->badge()
-                    ->color('danger')
-                    ->sortable()
-                    ->date(),
-
                 Tables\Columns\TextColumn::make('valor_parcela')
                     ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
                     ->money('BRL'),
-                Tables\Columns\IconColumn::make('status')
+                Tables\Columns\TextColumn::make('data_vencimento')
                     ->alignCenter()
-                    ->label('Pago')
-                    ->boolean(),
+                    ->label('Data Vencimento')
+                    ->date('d/m/Y')
+                    ->alignCenter()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('data_pagamento')
-                    ->label('Data do Pagamento')
-                    ->badge()
-                    ->color('success')
-                    ->date(),
+                    ->label('Data Pagamento')
+                    ->date()
+                    ->alignCenter()
+                    ->date('d/m/Y')
+                    ->alignCenter()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('valor_pago')
                     ->summarize(Sum::make()->money('BRL')->label('Total Pago'))
                     ->badge()
@@ -252,7 +261,7 @@ class ContasPagarResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->hidden(fn ($record) => $record->status == 1)
+                    ->hidden(fn($record) => $record->status == 1)
                     ->after(function ($data, $record) {
 
                         if ($record->status = 1 and $record->valor_parcela != $record->valor_pago) {
@@ -279,7 +288,7 @@ class ContasPagarResource extends Resource
                         FluxoCaixa::create($addFluxoCaixa);
                     }),
                 Tables\Actions\DeleteAction::make()
-                    ->hidden(fn ($record) => $record->status == 1),
+                    ->hidden(fn($record) => $record->status == 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
