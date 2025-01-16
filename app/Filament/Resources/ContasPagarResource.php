@@ -50,6 +50,7 @@ class ContasPagarResource extends Resource
                             ->label('Fornecedor')
                             ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
                             ->required()
+                            ->searchable()
                             ->disabled(function ($context) {
                                 if ($context == 'create') {
                                     return false;

@@ -55,6 +55,7 @@ class ContasReceberResource extends Resource
                             ->label('Cliente')
                             ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                             ->required()
+                            ->searchable()
                             ->disabled(function ($context) {
                                 if ($context == 'create') {
                                     return false;
