@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Livewire\ComprasMesChart;
 use App\Livewire\PagarHojeStatsOverview;
+use App\Livewire\RanckingProdutos;
 use App\Livewire\ReceberHojeStatsOverview;
 use App\Livewire\VendasMesChart;
 use App\Livewire\VendasPDVMesChart;
@@ -54,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 VendasMesChart::class,
                 VendasPDVMesChart::class,
                 ComprasMesChart::class,
+                RanckingProdutos::class,
 
             ])
             ->middleware([
