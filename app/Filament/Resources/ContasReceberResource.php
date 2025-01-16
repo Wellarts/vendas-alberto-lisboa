@@ -111,7 +111,7 @@ class ContasReceberResource extends Resource
                             ->label('Data do Vencimento')
                             ->displayFormat('d/m/Y')
                             ->required(),
-                        Forms\Components\DatePicker::make('data_recebimento')
+                        Forms\Components\DatePicker::make('data_pagamento')
                             ->label('Data do Recebimento')
                             ->hidden(function ($context) {
                                 if ($context == 'edit') {
@@ -165,11 +165,11 @@ class ContasReceberResource extends Resource
                         function (Get $get, Set $set) {
                             if ($get('status') == 1) {
                                 $set('valor_recebido', $get('valor_parcela'));
-                                $set('data_recebimento', Carbon::now()->format('Y-m-d'));
+                                $set('data_pagamento', Carbon::now()->format('Y-m-d'));
                             } else {
 
                                 $set('valor_recebido', 0);
-                                $set('data_recebimento', null);
+                                $set('data_pagamento', null);
                             }
                         }
                     ),
@@ -218,7 +218,7 @@ class ContasReceberResource extends Resource
                     ->date('d/m/Y')
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('data_recebimento')
+                Tables\Columns\TextColumn::make('data_pagamento')
                     ->label('Data Recebimento')
                     ->date()
                     ->alignCenter()
