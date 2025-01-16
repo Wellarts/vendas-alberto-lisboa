@@ -69,11 +69,15 @@ class PDVRelationManager extends RelationManager
                     $produto->estoque += ($record->qtd);
                     $venda->save();
                     $produto->save();
+                })
+                ->after(function () {
+                    return redirect(request()->header('Referer'));
                 }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                        
                 ]),
             ]);
     }

@@ -31,7 +31,9 @@ class Dashboard extends \Filament\Pages\Dashboard
     //teste
 
 
-      public function mount() {
+    public function mount(): void
+    {
+        
         // Notification::make()
         //     ->title('ATENÇÃO')
         //     ->persistent()
@@ -42,11 +44,11 @@ class Dashboard extends \Filament\Pages\Dashboard
         //         Action::make('Entendi')
         //             ->button()
         //             ->close(),
-        //         ])
+        //     ])
         //     ->send();
 
         PDV::whereNotIn('venda_p_d_v_id', VendaPDV::pluck('id'))->delete();
-    } 
+    }
 
     public static function getNavigationLabel(): string
     {
