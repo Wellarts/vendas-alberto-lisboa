@@ -86,7 +86,7 @@ class VendaResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('data_venda')
                     ->searchable()
-                    ->date(),
+                    ->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('valor_total')
                     ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->money('BRL'),

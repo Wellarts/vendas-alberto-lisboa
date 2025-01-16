@@ -94,7 +94,7 @@ class VendaPDVResource extends Resource
                 Tables\Columns\TextColumn::make('data_venda')
                     ->label('Data da Venda')
                     ->searchable()
-                    ->date(),
+                    ->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('valor_total')
                     ->label('Valor Total')
                     ->money('BRL'),
