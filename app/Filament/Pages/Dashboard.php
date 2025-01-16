@@ -2,7 +2,8 @@
 
 namespace App\Filament\Pages;
 
-
+use App\Models\PDV;
+use App\Models\VendaPDV;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Facades\Filament;
@@ -30,20 +31,22 @@ class Dashboard extends \Filament\Pages\Dashboard
     //teste
 
 
-   /*   public function mount() {
-        Notification::make()
-            ->title('ATENÇÃO')
-            ->persistent()
-            ->danger()
-            ->body('Sua mensalidade está atrasada, regularize sua assinatura para evitar o bloqueio do sistema.
-            PIX: 28708223831')
-            ->actions([
-                Action::make('Entendi')
-                    ->button()
-                    ->close(),
-                ])
-            ->send();
-    } */
+      public function mount() {
+        // Notification::make()
+        //     ->title('ATENÇÃO')
+        //     ->persistent()
+        //     ->danger()
+        //     ->body('Sua mensalidade está atrasada, regularize sua assinatura para evitar o bloqueio do sistema.
+        //     PIX: 28708223831')
+        //     ->actions([
+        //         Action::make('Entendi')
+        //             ->button()
+        //             ->close(),
+        //         ])
+        //     ->send();
+
+        PDV::whereNotIn('venda_p_d_v_id', VendaPDV::pluck('id'))->delete();
+    } 
 
     public static function getNavigationLabel(): string
     {
