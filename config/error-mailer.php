@@ -12,7 +12,7 @@ return [
         //
     ],
 
-    'cacheCooldown' => 10, // in minutes
+    'cacheCooldown' => 1, // in minutes
 
     'webhooks' => [
         'discord' => env('ERROR_MAILER_DISCORD_WEBHOOK'),
