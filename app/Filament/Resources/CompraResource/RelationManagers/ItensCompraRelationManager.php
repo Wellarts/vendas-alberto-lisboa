@@ -41,10 +41,26 @@ class ItensCompraRelationManager extends RelationManager
                         return $livewire->ownerRecord->id;
                     })),
 
+                // Forms\Components\Select::make('produto_id')
+                //     ->relationship(name: 'produto', titleAttribute: 'nome')
+                //     ->searchable(['nome', 'codbar'])
+                //     //  ->options(Produto::all()->pluck('nome', 'id')->toArray())
                 Forms\Components\Select::make('produto_id')
-                    ->relationship(name: 'produto', titleAttribute: 'nome')
-                    ->searchable(['nome', 'codbar'])
-                    //  ->options(Produto::all()->pluck('nome', 'id')->toArray())
+                            ->label('Produto')
+                            ->searchable()
+                            ->getSearchResultsUsing(function (string $search) {
+                                return Produto::query()
+                                    ->where('codbar', 'like', "%{$search}%")
+                                    ->orWhere('nome', 'like', "%{$search}%")
+                                    ->limit(50)
+                                    ->get()
+                                    ->mapWithKeys(function (Produto $product) {
+                                        // Exibe código de barras e nome no select
+                                        return [$product->id => "[{$product->codbar}] {$product->nome}"];
+                                    });
+                            })
+                            ->getOptionLabelUsing(fn($value): ?string => Produto::where('id', $value)->first()?->nome)
+                            ->autofocus()
                     ->createOptionForm([
                         Forms\Components\ToggleButtons::make('tipo')
                             ->label('Tipo')
@@ -158,6 +174,7 @@ class ItensCompraRelationManager extends RelationManager
                             'valor' => $data['valor_compra'],
 
                         ];
+                       // dd($prodFornecedor);
                         ProdutoFornecedor::create($prodFornecedor);
                     })
                     ->label('Adicionar Produtos'),
