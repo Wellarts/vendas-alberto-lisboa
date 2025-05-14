@@ -76,7 +76,21 @@ class PDVRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                $produto = Produto::find($record->produto_id);
+                                $venda = VendaPDV::find($record->venda_p_d_v_id);
+                                $venda->valor_total -= $record->sub_total;
+                                $produto->estoque += ($record->qtd);
+                                $venda->save();
+                                $produto->save();
+                            }
+                            
+                        })
+                        ->after(function () {
+                                return redirect(request()->header('Referer'));
+                          }),      
                         
                 ]),
             ]);
