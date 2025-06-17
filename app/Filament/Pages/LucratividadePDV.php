@@ -30,17 +30,17 @@ class LucratividadePDV extends Page implements HasTable
 
     protected static ?int $navigationSort = 18;
 
-    public static function shouldRegisterNavigation(): bool
-    {
-         /** @var \App\Models\User */
-         $authUser =  auth()->user();
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //      /** @var \App\Models\User */
+    //      $authUser =  auth()->user();
 
-         if ($authUser->hasRole('TI')) {
-             return true;
-         } else {
-             return false;
-         }
-    }
+    //      if ($authUser->hasRole('TI')) {
+    //          return true;
+    //      } else {
+    //          return false;
+    //      }
+    // }
 
 
     public function mount()
